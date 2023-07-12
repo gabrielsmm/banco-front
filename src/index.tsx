@@ -4,13 +4,16 @@ import 'bootstrap/dist/css/bootstrap.css';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { ContaContextProvider } from './context/ContaContext';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
   <React.StrictMode>
-    <App />
+    <ContaContextProvider>
+      <App />
+    </ContaContextProvider>
   </React.StrictMode>
 );
 

@@ -1,18 +1,21 @@
 import axios from 'axios';
 import Footer from "../../components/Footer";
 import NavBar from "../../components/NavBar";
-import { useState } from 'react';
+
+import { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BASE_URL } from '../../utils/requests';
 import { Conta } from '../../types/conta';
+import { ContaContext } from '../../context/ContaContext';
 
 const Home = () => {
-    const [idConta, setIdConta] = useState<number | undefined>(undefined);
+    const [idConta, setIdConta] = useState<number | null>(null);
     const [error, setError] = useState("");
     const navigate = useNavigate();
+    const context = useContext(ContaContext);
 
     const handleClick = async () => {
-        if (idConta === undefined || idConta <= 0) {
+        if (idConta === null || idConta <= 0) {
             setError("Informe o número da conta");
             return;
         }
@@ -20,7 +23,12 @@ const Home = () => {
         axios.get(`${BASE_URL}/contas/${idConta}`)
         .then(response => {
             const data = response.data as Conta;
-            if (data) navigate("/transferencias");
+            if (data) {
+                context?.setConta(data);
+                navigate("/transferencias");
+            } else {
+                setError(`Não foi possível localizar a conta com ID ${idConta}`);
+            }
         })
         .catch(error => {
             setError("Conta não encontrada");
