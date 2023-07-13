@@ -1,12 +1,14 @@
 import { useCallback, useContext, useEffect, useState } from "react";
-import Footer from "../../components/Footer";
-import NavBar from "../../components/NavBar";
 import { TransferenciaPage } from "../../types/transferencia";
-import axios from "axios";
 import { BASE_URL } from "../../utils/requests";
 import { ContaContext } from "../../context/ContaContext";
 import { useNavigate } from "react-router-dom";
 import { formatLocalDate } from "../../utils/format";
+
+import axios from "axios";
+import Footer from "../../components/Footer";
+import NavBar from "../../components/NavBar";
+import Pagination from "../../components/Pagination";
 
 const handleDateChange = (dateString: string, setState: React.Dispatch<React.SetStateAction<Date | null>>) => {
     const dateObject = new Date(dateString);
@@ -56,7 +58,7 @@ const Transferencias = () => {
       
         const params = {
           idConta: context?.conta.id,
-          pagina: pagina.number,
+          pagina: paginaAtiva,
           dataInicial: dataInicial,
           dataFinal: dataFinal,
           nomeOperador: nomeOperador
@@ -70,11 +72,15 @@ const Transferencias = () => {
         } catch (error) {
           console.error(error);
         }
-    }, [context?.conta, pagina.number, dataInicial, dataFinal, nomeOperador]);
+    }, [context?.conta, dataInicial, dataFinal, nomeOperador, paginaAtiva, navigate]);
 
     useEffect(() => {
         obterTransferencias();
     }, [obterTransferencias]);
+
+    const mudarPagina = (index: number) => {
+        setPaginaAtiva(index);
+    }
 
     return (
         <>
@@ -136,6 +142,7 @@ const Transferencias = () => {
                         </tbody>
                     </table>
                 </div>
+                <Pagination pagina={pagina} mudarPagina={mudarPagina} />
             </div>
             <Footer />
         </>
